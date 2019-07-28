@@ -36,8 +36,8 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <button type="button" onclick="javascript:mostrarContactos();" class="btn btn-success">contactos</button>
-                    <button type="button" onclick="javascript:leerMock(1);" class="btn btn-dark">conectados</button>
+                    <button type="button" onclick="javascript:onDeviceReady();" class="btn btn-success">contactos</button>
+                    <button type="button" onclick="javascript:leerMock(2);" class="btn btn-dark">conectados</button>
                     <button type="button" onclick="javascript:checkConnection();"class="btn btn-warning">navergar</button>
                     <button type="button" onclick="javascript:checkConnection();" class="btn btn-info">servico</button>
                     <button type="button" onclick="javascript:vibrate();" class="btn btn-info">vibrar dispositivo</button>
@@ -124,16 +124,13 @@
 
         }
 
-        function mostrarContactos() {
-            var options = new ContactFindOptions();
-            options.filter = "María";
-            options.multiple = true;
-            options.desiredFields = [navigator.contacts.fieldType.id];
-            options.hasPhoneNumber = true;
-            var fields = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.name];
-            //BUSCAR CONTACTOS
-            navigator.contacts.find(fields, onSuccess, onError, options);
-        }
+        function onDeviceReady() {
+                // find all contacts with 'Bob' in any name field
+                var options = new ContactFindOptions();
+                options.filter = "mala";
+                var fields = ["displayName", "name"];
+                navigator.contacts.find(fields, onSuccess, onError, options);
+            }
         function onSuccess(contacts) {
             alert(contacts.length);
             console.log(contacts.length);
@@ -170,6 +167,8 @@
         function vibrate() {
         navigator.notification.vibrate(2000);
     }
+
+    
 
 
     </script>
