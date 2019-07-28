@@ -11,14 +11,7 @@
     <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
     <meta http-equiv="Content-Security-Policy"
         content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
-    <!-- Good default declaration:
-    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-        * Enable inline JS: add 'unsafe-inline' to default-src
-        * Enable eval(): add 'unsafe-eval' to default-src
-    * Create your own at http://cspisawesome.com
-    -->
+    
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
     <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
@@ -35,28 +28,28 @@
                 <br>
             </div>
             <div class="row">
-                <div class="col">
+                <div class=" btn-group col">
                     <button type="button" onclick="javascript:mostrarContactos();" class="btn btn-success">contactos</button>
                     <button type="button" onclick="javascript:leerMock(2);" class="btn btn-dark">conectados</button>
                     <button type="button" onclick="javascript:checkConnection();"class="btn btn-warning">navergar</button>
-                    <button type="button" onclick="javascript:checkConnection();" class="btn btn-info">servico</button>
+                    <button type="button" onclick="javascript:leerMock(1);" class="btn btn-info">servico</button>
                     <button type="button" onclick="javascript:vibrate();" class="btn btn-info">vibrar dispositivo</button>
-                    <button type="button" onclick="javascript:capturePhoto();" class="btn btn-info">Camara</button>
+                    <button type="button" onclick="javascript:checkConnection();" class="btn btn-info">Camara</button>
                 </div>
             </div>
-            <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Telefono</th>
-                        </tr>
-                    </thead>
-                    </table>
-
-
-
 
         </div>
+        <!-- resultados -->
+        <div id="result">
+                Resultado aqui
+            </div>
+            
+            <table id="tableContactos">
+                <tr>
+                    <td>Name</td>
+                    <td>CellPhone</td>
+                </tr>
+            </table>
 
 
 
@@ -92,17 +85,17 @@
                 $.ajax({
                     url: "http://www.programa2.net/univalle/obtener_alumnos.php",
                     success: function (result) {
-                        var htmlResult = "<table class='table' border='1' id='resultado'>";
+                        var htmlResult = "<table class='table table-bordered table-striped' id='resultado'>";
                         htmlResult += "<tr>";
-                        htmlResult += "<th>Id</th>";
-                        htmlResult += "<th>Name</th>";
-                        htmlResult += "<th>College</th>";
+                        htmlResult += "<th>idAlumno</th>";
+                        htmlResult += "<th>nomre</th>";
+                        htmlResult += "<th>direccion</th>";
                         htmlResult += "</tr>";
-                        for (i in result.students) {
+                        for (i in result.estado) {
                             htmlResult += "<tr>";
-                            htmlResult += "<td>" + result.students[i].id + "</td>";
-                            htmlResult += "<td>" + result.students[i].name + "</td>";
-                            htmlResult += "<td>" + result.students[i].college + "</td>";
+                            htmlResult += "<td>" + result.students[i].idAlumno + "</td>";
+                            htmlResult += "<td>" + result.students[i].nombre + "</td>";
+                            htmlResult += "<td>" + result.students[i].direccion + "</td>";
                             htmlResult += "</tr>";
                         }
                         htmlResult += "</table>";
@@ -118,13 +111,21 @@
                 })
             } else if (option == 2) {
                 $('#result').load('http://www.programa2.net/univalle/obtener_alumnos.php');
+                $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
             }
 
         }
 
         function mostrarContactos() {
             var options = new ContactFindOptions();
-            options.filter = "mamá";
+            options.filter = "";
             options.multiple = true;
             options.desiredFields = [navigator.contacts.fieldType.id];
             options.hasPhoneNumber = true;
@@ -168,91 +169,7 @@
         function vibrate() {
         navigator.notification.vibrate(2000);
     }
-
-    var pictureSource;   // picture source
-    var destinationType; // sets the format of returned value
-
-    // Wait for device API libraries to load
-    //
-    document.addEventListener("deviceready",onDeviceReady,false);
-
-    // device APIs are available
-    //
-    function onDeviceReady() {
-        pictureSource=navigator.camera.PictureSourceType;
-        destinationType=navigator.camera.DestinationType;
-    }
-
-    // Called when a photo is successfully retrieved
-    //
-    function onPhotoDataSuccess(imageData) {
-      // Uncomment to view the base64-encoded image data
-      // console.log(imageData);
-
-      // Get image handle
-      //
-      var smallImage = document.getElementById('smallImage');
-
-      // Unhide image elements
-      //
-      smallImage.style.display = 'block';
-
-      // Show the captured photo
-      // The inline CSS rules are used to resize the image
-      //
-      smallImage.src = "data:image/jpeg;base64," + imageData;
-    }
-
-    // Called when a photo is successfully retrieved
-    //
-    function onPhotoURISuccess(imageURI) {
-      // Uncomment to view the image file URI
-      // console.log(imageURI);
-
-      // Get image handle
-      //
-      var largeImage = document.getElementById('largeImage');
-
-      // Unhide image elements
-      //
-      largeImage.style.display = 'block';
-
-      // Show the captured photo
-      // The inline CSS rules are used to resize the image
-      //
-      largeImage.src = imageURI;
-    }
-
-    // A button will call this function
-    //
-    function capturePhoto() {
-      // Take picture using device camera and retrieve image as base64-encoded string
-      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50,
-        destinationType: destinationType.DATA_URL });
-    }
-
-    // A button will call this function
-    //
-    function capturePhotoEdit() {
-      // Take picture using device camera, allow edit, and retrieve image as base64-encoded string
-      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 20, allowEdit: true,
-        destinationType: destinationType.DATA_URL });
-    }
-
-    // A button will call this function
-    //
-    function getPhoto(source) {
-      // Retrieve image file location from specified source
-      navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50,
-        destinationType: destinationType.FILE_URI,
-        sourceType: source });
-    }
-
-    // Called if something bad happens.
-    //
-    function onFail(message) {
-      alert('Failed because: ' + message);
-    }
+    
 
     
 
