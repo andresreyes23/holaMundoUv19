@@ -35,6 +35,12 @@
                     <button type="button" onclick="javascript:leerMock(1);" class="btn btn-info">servico</button>
                     <button type="button" onclick="javascript:vibrate();" class="btn btn-info">vibrar dispositivo</button>
                     <button type="button" onclick="javascript:capturePhoto();" class="btn btn-info">Camara</button>
+                    <button onclick="capturePhoto();">Capture Photo</button> <br>
+    <button onclick="capturePhotoEdit();">Capture Editable Photo</button> <br>
+    <button onclick="getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</button><br>
+    <button onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</button><br>
+    <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
+    <img style="display:none;" id="largeImage" src="" />
                 </div>
             </div>
 
